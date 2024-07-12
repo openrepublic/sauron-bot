@@ -1,0 +1,11 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# virtualenv
+.venv
+
+# download abis
+*.abi
+
+# sensitive *.ini files
+*.ini

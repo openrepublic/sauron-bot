@@ -45,7 +45,7 @@ def telegram_bot(filename):
                     global missed_bpr_cache
                     global system_status_cache
                     system_status_cache.system = await utils.get_system_info()
-                    response = await utils.build_producer_status_message(
+                    response, missed_bpr_cache = await utils.build_producer_status_message(
                         cleos, cleos_local, ntp_client, system_status_cache , config.producer_name,
                         config.users_alerted, missed_bpr_cache)
                     await bot.send_message(config.chat_id, response, parse_mode='HTML')
@@ -139,7 +139,7 @@ def telegram_bot(filename):
             global system_status_cache
             global missed_bpr_cache
             system_status_cache.system = await utils.get_system_info()
-            response = await utils.build_producer_status_message(
+            response, missed_bpr_cache = await utils.build_producer_status_message(
                     cleos, cleos_local, ntp_client, system_status_cache, config.producer_name,
                     config.users_alerted, missed_bpr_cache)
             await bot.reply_to(message=message, text=response, parse_mode='HTML')

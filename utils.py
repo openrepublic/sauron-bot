@@ -234,7 +234,7 @@ def get_producer_status(cleos: CLEOS, producer_name: str, missed_bpr_cache: int)
         message.alert = True
     elif int(message.missed_blocks_per_rotation) == 0 and missed_bpr_cache > 0:
         missed_bpr_cache = 0
-    return message
+    return message, missed_bpr_cache
 
 async def build_producer_status_message(
         cleos: CLEOS,
@@ -256,7 +256,7 @@ async def build_producer_status_message(
     disk_usage = system_stats.disk_usage.percent
     nodeos_status = system_stats.nodeos_status
 
-    bp_status = get_producer_status(cleos, producer_name, missed_bpr_cache)
+    bp_status, new_missed_bpr_cache = get_producer_status(cleos, producer_name, missed_bpr_cache)
     total_votes = formatting(bp_status.total_votes)
     lifetime_produced_blocks = formatting(bp_status.lifetime_produced_blocks)
     lifetime_missed_blocks = formatting(bp_status.lifetime_missed_blocks)
@@ -314,9 +314,9 @@ async def build_producer_status_message(
     )
     if clock_offset != 'Synced' or bp_status.alert or sys_health_check.alert:
         response += build_tags(users_alerted)
-        return response
+        return response, new_missed_bpr_cache
     response += f"\n{green_check_mark_emoji}"
-    return response
+    return response, new_missed_bpr_cache
 
 def build_help_message():
     return (

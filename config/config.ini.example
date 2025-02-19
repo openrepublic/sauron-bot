@@ -1,9 +1,9 @@
 [config]
-abi_path = <ABI_PATH>
+abi_path = ./eosio.abi
 bot_token = <BOT_TOKEN>
 chat_id = <CHAT_ID>
 claimer_permission = <CLAIMER_PERMISSION>
-claimer_private_key = <CLAIMER_PRIVATE_KEY> 
+claimer_private_key = <CLAIMER_PRIVATE_KEY>
 location = <PRODUCER_LOCATION>
 node_url = <NODE_URL>
 local_node_url = <LOCAL_NODE_URL>
@@ -12,4 +12,4 @@ producer_url = <PRODUCER_URL>
 producer_public_key = <PRODUCER_PUBLIC_KEY>
 register_permission = <REGISTER_PERMISSION>
 register_private_key = <REGISTER_PRIVATE_KEY>
-users_alerted = <USER_1>, ... , <USER_N> 
+users_alerted = <USER_1>, ... , <USER_N>

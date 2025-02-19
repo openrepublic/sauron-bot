@@ -121,7 +121,7 @@ def get_ram_usage():
         free = round(int(mem_line[3]) / 1024, 2)
         available = round(int(mem_line[6]) / 1024, 2)
         percent = round((used / total) * 100, 2)
-        
+
         return RamUsage(**{
             'total_gb': total,
             'used_gb': used,
@@ -249,7 +249,7 @@ async def build_producer_status_message(
     sys_health_check = await health_check(cache_data)
     locale.setlocale(locale.LC_ALL, 'en_US.UTF-8') 
     locale.setlocale(locale.LC_NUMERIC, 'en_US.UTF-8')
- 
+
     system_stats = sys_health_check.system
     cpu_load = system_stats.cpu_load
     ram_usage = system_stats.ram_usage.percent
@@ -262,7 +262,7 @@ async def build_producer_status_message(
     lifetime_missed_blocks = formatting(bp_status.lifetime_missed_blocks)
     missed_blocks_per_rotation = formatting(bp_status.missed_blocks_per_rotation)
     unpaid_blocks = formatting(bp_status.unpaid_blocks)
-    
+
     network_stats = sys_health_check.network
     ping = network_stats.ping
     down = formatting(network_stats.down)
@@ -385,7 +385,8 @@ def get_schedule_message(schedule: list, producer_name):
     return msg
 
 def get_rotation(cleos: CLEOS, producer_name: str):
-    active, prev_bp, next_bp = get_producers(cleos.get_schedule()['active']['producers'], producer_name)
+    active, prev_bp, next_bp = get_producers(cleos.get_schedule()['active']['producers'],
+                                             producer_name)
     if active:
         return Rotation(**{
             'active': active,

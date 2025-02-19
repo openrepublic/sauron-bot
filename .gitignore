@@ -9,3 +9,5 @@ __pycache__/
 
 # sensitive *.ini files
 *.ini
+*.ini.mainnet
+*.ini.testnet

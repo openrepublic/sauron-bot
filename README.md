@@ -10,24 +10,27 @@ Sauron is a monitoring bot that integrates with Telegram and EOSIO blockchain to
 
 ## Installation
 
-To run the Sauron Bot, you need Python 3.10+ installed. Follow these steps to install the necessary dependencies:
+To run the Sauron Bot, you need Python 3.12 installed. run this command:
 
-```
-pip install -r requirements.txt
-```
+    uv lock
+
+## Nixos Installation
+
+    nix-shell
 
 ## Usage
 
-Create a configuration file `config.ini` (an example is provided as `config.ini.example`).
+Create a configuration file `config/config.ini` (an example is provided as `config/config.ini.example`).
 
 To complete the `config.ini` file you need a `bot_token` and a `chat_id`, take a look at the [Telegram bot documentation](https://core.telegram.org/bots/tutorial).
-```
-python telegram_bot.py config.ini
-```
 
-This will load the default values specified in `config.ini`, reducing the need to specify each option on the command line.
 
-The bot uses `utils.py` to gather system health data. It checks:
+    uv run python src/telegram_bot.py config/config.ini
+
+
+This will load the default values specified in `config/config.ini`, reducing the need to specify each option on the command line.
+
+The bot uses `src/utils.py` to gather system health data. It checks:
 
 ## System Information
 

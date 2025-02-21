@@ -25,12 +25,12 @@ Create a configuration file `config/config.ini` (an example is provided as `conf
 To complete the `config.ini` file you need a `bot_token` and a `chat_id`, take a look at the [Telegram bot documentation](https://core.telegram.org/bots/tutorial).
 
 
-    uv run python src/telegram_bot.py config/config.ini
+    uv run sauron telegram <config_file_path>
 
 
-This will load the default values specified in `config/config.ini`, reducing the need to specify each option on the command line.
+This will load the default values specified in `config.ini`, reducing the need to specify each option on the command line.
 
-The bot uses `src/utils.py` to gather system health data. It checks:
+The bot uses `service.py` to gather system health data. It checks:
 
 ## System Information
 

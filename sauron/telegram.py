@@ -142,8 +142,8 @@ def launch_telegram(filename):
 
         @bot.message_handler(commands=['schedule'])
         async def request_producers_schedule(message):
-            producers = await get_all_producers(config.node_url)
-            schedule = get_schedule_message([ producer['owner'] for producer in producers ], config.producer_name)
+            producers = await get_producers_list(config.node_url)
+            schedule = get_schedule_message(producers, config.producer_name)
             await bot.reply_to(message=message, text=schedule, parse_mode='HTML')
 
 

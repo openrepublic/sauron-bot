@@ -252,6 +252,11 @@ async def get_all_producers(url: str):
     return producers
 
 
+async def get_producers_list(url: str) -> list[str]:
+    producers = await get_all_producers(url)
+    return [ producer['owner'] for producer in producers ]
+
+
 def get_neighbors(producers: list, producer_name: str):
     for index in range(1, len(producers)):
         if producers[index].get('owner') == producer_name:

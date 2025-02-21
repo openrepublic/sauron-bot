@@ -6,9 +6,9 @@ stdenv.mkDerivation {
   name = "sauron-bot-uv";
   buildInputs = [
     # Python requirements.
-    python312Full
-    python312Packages.uv
-    python312Packages.zstandard
+    python311Full
+    python311Packages.uv
+    python311Packages.zstandard
   ];
   src = null;
   shellHook = ''

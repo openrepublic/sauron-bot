@@ -13,7 +13,7 @@ name = "sauron"
 version = "0.1.0"
 description = "bot for monitoring telos block producer"
 authors = [{ name = "Nelson Torres", email = "nelson.torres.a@proton.me" }]
-requires-python = ">=3.12, <3.13"
+requires-python = ">=3.11, <3.12"
 license = "AGPL-3.0-or-later"
 readme = "README.md"
 keywords = [
@@ -22,7 +22,7 @@ keywords = [
 classifiers = [
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.11",
     "Intended Audience :: Developers",
     "Intended Audience :: Education",
 ]
@@ -39,6 +39,7 @@ dependencies = [
     'telebot >=0.0.5, <1.0.0',
     'urllib3 >=2.2.2, <3.0.0',
     'py-leap',
+    "zstandard>=0.23.0",
 ]
 
 

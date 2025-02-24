@@ -14,9 +14,9 @@ rocket_emoji = f"<tg-emoji emoji-id='128640'>🚀</tg-emoji>"
 async def build_producer_status_message(
         cleos: CLEOS,
         ntp_client: NTPClient,
+        bp_status: tuple[BlockProducer, int],
         cache_data: Cache,
-        config: dict,
-        missed_bpr_cache: int
+        config: Config,
     ):
 
     sys_health_check = await health_check(cache_data)
@@ -29,7 +29,6 @@ async def build_producer_status_message(
     disk_usage = system_stats.disk_usage.percent
     nodeos_status = system_stats.nodeos_status
 
-    bp_status, new_missed_bpr_cache = get_producer_status(cleos, config.producer_name, missed_bpr_cache)
     total_votes = formatting(bp_status.total_votes)
     lifetime_produced_blocks = formatting(bp_status.lifetime_produced_blocks)
     lifetime_missed_blocks = formatting(bp_status.lifetime_missed_blocks)
@@ -91,9 +90,9 @@ async def build_producer_status_message(
 
     if clock_offset != 'Synced' or bp_status.alert or sys_health_check.alert:
         response += build_tags(config.users_alerted)
-        return response, new_missed_bpr_cache
+        return response
     response += f"\n{green_check_mark_emoji}"
-    return response, new_missed_bpr_cache
+    return response
 
 
 def build_help_message():

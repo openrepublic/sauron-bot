@@ -127,7 +127,11 @@ def get_payment(cleos: CLEOS, producer_name: str):
     return payment
 
 
-def get_producer_status(cleos: CLEOS, producer_name: str, missed_bpr_cache: int):
+def get_producer_status(
+        cleos: CLEOS,
+        producer_name: str,
+        missed_bpr_cache: int
+):
     producer_status = cleos.get_table(
         account='eosio',
         scope='eosio',
@@ -140,7 +144,7 @@ def get_producer_status(cleos: CLEOS, producer_name: str, missed_bpr_cache: int)
     if int(float(producer_status[0].get('total_votes'))) > 0:
         total_votes =  int(float(producer_status[0].get('total_votes'))) / 10000
 
-    message = BlockProducer(**{
+    bp_status = BlockProducer(**{
         'owner': producer_status[0].get('owner'),
         'is_active': producer_status[0].get('is_active'),
         'total_votes': total_votes,
@@ -150,12 +154,14 @@ def get_producer_status(cleos: CLEOS, producer_name: str, missed_bpr_cache: int)
         'unpaid_blocks': int(producer_status[0].get('unpaid_blocks')),
         'payment': get_payment(cleos, producer_name),
     })
-    if int(message.missed_blocks_per_rotation) > missed_bpr_cache:
-        missed_bpr_cache = message.missed_blocks_per_rotation
-        message.alert = True
-    elif int(message.missed_blocks_per_rotation) == 0 and missed_bpr_cache > 0:
+
+    if int(bp_status.missed_blocks_per_rotation) > missed_bpr_cache:
+        missed_bpr_cache = bp_status.missed_blocks_per_rotation
+        bp_status.alert = True
+    elif int(bp_status.missed_blocks_per_rotation) == 0 and missed_bpr_cache > 0:
         missed_bpr_cache = 0
-    return message, missed_bpr_cache
+
+    return bp_status, missed_bpr_cache
 
 
 def get_abi(cleos: CLEOS, abi_path: str):
@@ -244,6 +250,11 @@ async def get_all_producers(url: str):
         lower = response['rows'][0]['total_votes']
 
     return producers
+
+
+async def get_producers_list(url: str) -> list[str]:
+    producers = await get_all_producers(url)
+    return [ producer['owner'] for producer in producers ]
 
 
 def get_neighbors(producers: list, producer_name: str):

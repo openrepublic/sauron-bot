@@ -44,12 +44,18 @@ def launch_telegram(filename):
                     global missed_bpr_cache
                     global system_status_cache
                     system_status_cache.system = await get_system_info()
-                    response, missed_bpr_cache = await build_producer_status_message(
+                    bp_status, missed_bpr_cache = get_producer_status(
+                        cleos,
+                        config.producer_name,
+                        missed_bpr_cache
+                    )
+
+                    response = await build_producer_status_message(
                         cleos,
                         ntp_client,
+                        bp_status,
                         system_status_cache,
                         config,
-                        missed_bpr_cache
                     )
                     await bot.send_message(config.chat_id, response, parse_mode='HTML')
                 except Exception as e:
@@ -146,12 +152,19 @@ def launch_telegram(filename):
             global system_status_cache
             global missed_bpr_cache
             system_status_cache.system = await get_system_info()
+            bp_status, missed_bpr_cache = get_producer_status(
+                cleos,
+                config.producer_name,
+                missed_bpr_cache
+            )
+
             response, missed_bpr_cache = await build_producer_status_message(
                 cleos,
                 ntp_client,
+                bp_status,
                 system_status_cache,
                 config,
-                missed_bpr_cache)
+            )
             await bot.reply_to(message=message, text=response, parse_mode='HTML')
 
 

@@ -135,13 +135,6 @@ def mock_ntp():
         mock_request.return_value.tx_time = 1670000000.0
         yield mock_request
 
-@pytest.fixture
-def mock_cleos_get_table():
-    '''Mock CLEOS calls so get_producer_status returns a consistent value.'''
-    with patch('leap.cleos.CLEOS.get_producer_status') as mocked:
-        mocked.return_value.tx_time = 1670000000.0
-        yield mock_request
-
 # -------------------------------------------------------------------
 # Service functionality tests
 # -------------------------------------------------------------------

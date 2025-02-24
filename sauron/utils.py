@@ -53,32 +53,32 @@ async def build_producer_status_message(
 
     system_message = (
         f"<b><u>System Information:</u></b>\n"
-        f"{format_fixed_width('Clock:', f'{clock_offset}', 9, 33)}\n"
-        f"{format_fixed_width('CPU Load:', f'[ {cpu_load.min_1} {cpu_load.min_5} {cpu_load.min_15} ]', 9, 26)}\n"
-        f"{format_fixed_width('RAM Usage:', f'{ram_usage} %', 10, 26)}\n"
+        f"{format_fixed_width('Clock:',      f'{clock_offset}',  9, 33)}\n"
+        f"{format_fixed_width('CPU Load:',   f'[ {cpu_load.min_1} {cpu_load.min_5} {cpu_load.min_15} ]', 9, 26)}\n"
+        f"{format_fixed_width('RAM Usage:',  f'{ram_usage} %',  10, 26)}\n"
         f"{format_fixed_width('Disk Usage:', f'{disk_usage} %', 11, 28)}\n"
-        f"{format_fixed_width('Nodeos:', f'{nodeos_status}', 7, 28)}\n"
+        f"{format_fixed_width('Nodeos:',     f'{nodeos_status}', 7, 28)}\n"
     )
 
     network_message = (
         f"<b><u>Network Information:</u></b>\n"
-        f"{format_fixed_width('Ping:', f'{ping} ms', 14, 29)}\n"
-        f"{format_fixed_width('Down:', f'{down} Mbps', 11, 29)}\n"
-        f"{format_fixed_width('Up:', f'{up} Mbps', 14, 29)}\n"
+        f"{format_fixed_width('Ping:',       f'{ping} ms',       14, 29)}\n"
+        f"{format_fixed_width('Down:',       f'{down} Mbps',     11, 29)}\n"
+        f"{format_fixed_width('Up:',         f'{up} Mbps',       14, 29)}\n"
         f"{format_fixed_width('Updated at:', network_updated_at, 11, 26)}\n"
     )
 
     bp_status_message = (
         f"<b><u>BP Stats:</u></b>\n"
-        f"{format_fixed_width('Is active:', f'{bp_status.is_active}', 23, 24)}\n"
-        f"{format_fixed_width('Total votes:', f'{total_votes}', 9, 24)}\n"
+        f"{format_fixed_width('Is active:',       f'{bp_status.is_active}',          23, 24)}\n"
+        f"{format_fixed_width('Total votes:',     f'{total_votes}',                   9, 24)}\n"
         f"{format_fixed_width('Produced blocks:', f'{str(lifetime_produced_blocks)}', 9, 16)}\n"
-        f"{format_fixed_width('Missed blocks:', f'{lifetime_missed_blocks}', 16, 22)}\n"
-        f"{format_fixed_width('Missed bpr:', f'{missed_blocks_per_rotation}', 16, 27)}\n"
-        f"{format_fixed_width('Unpaid blocks:', f'{unpaid_blocks}', 16, 23)}\n"
-        f"{format_fixed_width('Payment:', f'{bp_status.payment}', 8, 22)}\n"
-        f"{format_fixed_width('Accuracy:', f'{accuracy:.4f} %', 14, 23)}\n"
-        f"{format_fixed_width('Ranking: ', f'{rank}', 21, 23)}\n"
+        f"{format_fixed_width('Missed blocks:',   f'{lifetime_missed_blocks}',       16, 22)}\n"
+        f"{format_fixed_width('Missed bpr:',      f'{missed_blocks_per_rotation}',   16, 27)}\n"
+        f"{format_fixed_width('Unpaid blocks:',   f'{unpaid_blocks}',                16, 23)}\n"
+        f"{format_fixed_width('Payment:',         f'{bp_status.payment}',             8, 22)}\n"
+        f"{format_fixed_width('Accuracy:',        f'{accuracy:.4f} %',               14, 23)}\n"
+        f"{format_fixed_width('Ranking: ',        f'{rank}',                         21, 23)}\n"
     )
 
     response = (
@@ -124,7 +124,7 @@ def get_rotation_message(rotation: Rotation):
     )
     if rotation.active:
         msg += (
-            f"\n{format_fixed_width('Prev:', f'{rotation.prev_bp}', 15, 26)}"
+            f"\n{format_fixed_width('Prev:', f'{rotation.prev_bp}', 13, 26)}"
             f"\n{format_fixed_width('Next:', f'{rotation.next_bp}', 13, 26)}"
         )
     return msg

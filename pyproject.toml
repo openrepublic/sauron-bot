@@ -40,12 +40,14 @@ dependencies = [
     'urllib3 >=2.2.2, <3.0.0',
     'py-leap',
     "zstandard>=0.23.0",
+    "pformat>=0.0.1",
 ]
 
 
 [dependency-groups]
 dev = [
-    "pytest >=6.0.0, <7.0.0",
+    "pytest >=7.0.0, <8.0.0",
+    "pytest-asyncio >=0.21.1, <0.22.0",
 ]
 
 [project.scripts]

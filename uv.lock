@@ -87,12 +87,6 @@ wheels = [
 ]
 
 [[package]]
-name = "atomicwrites"
-version = "1.4.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/87/c6/53da25344e3e3a9c01095a89f16dbcda021c609ddb42dd6d7c0528236fb2/atomicwrites-1.4.1.tar.gz", hash = "sha256:81b2c9071a49367a7f770170e5eec8cb66567cfbbc8c73d20ce5ca4a8d71cf11", size = 14227 }
-
-[[package]]
 name = "attrs"
 version = "25.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -316,10 +310,28 @@ wheels = [
 ]
 
 [[package]]
+name = "parse"
+version = "1.20.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4f/78/d9b09ba24bb36ef8b83b71be547e118d46214735b6dfb39e4bfde0e9b9dd/parse-1.20.2.tar.gz", hash = "sha256:b41d604d16503c79d81af5165155c0b20f6c8d6c559efa66b4b695c3e5a0a0ce", size = 29391 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d0/31/ba45bf0b2aa7898d81cbbfac0e88c267befb59ad91a19e36e1bc5578ddb1/parse-1.20.2-py2.py3-none-any.whl", hash = "sha256:967095588cb802add9177d0c0b6133b5ba33b1ea9007ca800e526f42a85af558", size = 20126 },
+]
+
+[[package]]
 name = "pbkdf2"
 version = "1.3"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/02/c0/6a2376ae81beb82eda645a091684c0b0becb86b972def7849ea9066e3d5e/pbkdf2-1.3.tar.gz", hash = "sha256:ac6397369f128212c43064a2b4878038dab78dab41875364554aaf2a684e6979", size = 6360 }
+
+[[package]]
+name = "pformat"
+version = "0.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "parse" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1c/44/6382c65c0eaeaf516a5658445641d3bdd2554810a7d7090bd7c3a1480490/pformat-0.0.1.tar.gz", hash = "sha256:9a18e478b3699b31d048848f7db96ec05c31797567cd99867b10232ebd620631", size = 5755 }
 
 [[package]]
 name = "pluggy"
@@ -353,15 +365,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/e0/cb077e8e7a583c733df7f53327fcbdb92e42be59b976ce60bf1d904a0efe/propcache-0.3.0-cp311-cp311-win32.whl", hash = "sha256:63f26258a163c34542c24808f03d734b338da66ba91f410a703e505c8485791d", size = 40455 },
     { url = "https://files.pythonhosted.org/packages/d8/35/57abeb6146fe3c19081eeaf3d9d4cfea256f87f1e5101acf80d3332c1820/propcache-0.3.0-cp311-cp311-win_amd64.whl", hash = "sha256:cacea77ef7a2195f04f9279297684955e3d1ae4241092ff0cfcef532bb7a1c32", size = 44705 },
     { url = "https://files.pythonhosted.org/packages/b5/35/6c4c6fc8774a9e3629cd750dc24a7a4fb090a25ccd5c3246d127b70f9e22/propcache-0.3.0-py3-none-any.whl", hash = "sha256:67dda3c7325691c2081510e92c561f465ba61b975f481735aefdfc845d2cd043", size = 12101 },
-]
-
-[[package]]
-name = "py"
-version = "1.11.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/98/ff/fec109ceb715d2a6b4c4a85a61af3b40c723a961e8828319fbcb15b868dc/py-1.11.0.tar.gz", hash = "sha256:51c75c4126074b472f746a24399ad32f6053d1b34b68d2fa41e558e6f4a98719", size = 207796 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f6/f0/10642828a8dfb741e5f3fbaac830550a518a775c7fff6f04a007259b0548/py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378", size = 98708 },
 ]
 
 [[package]]
@@ -416,21 +419,29 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "6.2.5"
+version = "7.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "atomicwrites", marker = "sys_platform == 'win32'" },
-    { name = "attrs" },
     { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
-    { name = "py" },
-    { name = "toml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4b/24/7d1f2d2537de114bdf1e6875115113ca80091520948d370c964b88070af2/pytest-6.2.5.tar.gz", hash = "sha256:131b36680866a76e6781d13f101efb86cf674ebb9762eb70d3082b6f29889e89", size = 1118720 }
+sdist = { url = "https://files.pythonhosted.org/packages/80/1f/9d8e98e4133ffb16c90f3b405c43e38d3abb715bb5d7a63a5a684f7e46a3/pytest-7.4.4.tar.gz", hash = "sha256:2cf0005922c6ace4a3e2ec8b4080eb0d9753fdc93107415332f50ce9e7994280", size = 1357116 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/40/76/86f886e750b81a4357b6ed606b2bcf0ce6d6c27ad3c09ebf63ed674fc86e/pytest-6.2.5-py3-none-any.whl", hash = "sha256:7310f8d27bc79ced999e760ca304d69f6ba6c6649c0b60fb0e04a4a77cacc134", size = 280654 },
+    { url = "https://files.pythonhosted.org/packages/51/ff/f6e8b8f39e08547faece4bd80f89d5a8de68a38b2d179cc1c4490ffa3286/pytest-7.4.4-py3-none-any.whl", hash = "sha256:b090cdf5ed60bf4c45261be03239c2c1c22df034fbffe691abe93cd80cea01d8", size = 325287 },
+]
+
+[[package]]
+name = "pytest-asyncio"
+version = "0.21.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ae/53/57663d99acaac2fcdafdc697e52a9b1b7d6fcf36616281ff9768a44e7ff3/pytest_asyncio-0.21.2.tar.gz", hash = "sha256:d67738fc232b94b326b9d060750beb16e0074210b98dd8b58a5239fa2a154f45", size = 30656 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9c/ce/1e4b53c213dce25d6e8b163697fbce2d43799d76fa08eea6ad270451c370/pytest_asyncio-0.21.2-py3-none-any.whl", hash = "sha256:ab664c88bb7998f711d8039cacd4884da6430886ae8bbd4eded552ed2004f16b", size = 13368 },
 ]
 
 [[package]]
@@ -458,6 +469,7 @@ dependencies = [
     { name = "click" },
     { name = "msgspec" },
     { name = "ntplib" },
+    { name = "pformat" },
     { name = "py-leap" },
     { name = "pytelegrambotapi" },
     { name = "requests" },
@@ -470,6 +482,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
+    { name = "pytest-asyncio" },
 ]
 
 [package.metadata]
@@ -479,6 +492,7 @@ requires-dist = [
     { name = "click", specifier = ">=7.1.2,<8.0.0" },
     { name = "msgspec", specifier = ">=0.18.6,<0.19.0" },
     { name = "ntplib", specifier = ">=0.4.0,<1.0.0" },
+    { name = "pformat", specifier = ">=0.0.1" },
     { name = "py-leap", git = "https://github.com/guilledk/py-leap.git?tag=v0.1a25" },
     { name = "pytelegrambotapi", specifier = ">=4.21.0,<5.0.0" },
     { name = "requests", specifier = ">=2.31.0,<3.0.0" },
@@ -489,7 +503,10 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=6.0.0,<7.0.0" }]
+dev = [
+    { name = "pytest", specifier = ">=7.0.0,<8.0.0" },
+    { name = "pytest-asyncio", specifier = ">=0.21.1,<0.22.0" },
+]
 
 [[package]]
 name = "sniffio"
@@ -520,15 +537,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/1f/3b/e4188cffaf370f432f15d518cbb53a438200ee7ef68c6db1acab337634e1/telebot-0.0.5.tar.gz", hash = "sha256:848a5885b57247b65edd0e92647b4372ebd8d41611dca3f344788c11deac2571", size = 4752 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ad/2f/d8d669be86c42dd2075d7b25bb6de73a3181661a79ef6a3c53dc811f17a1/telebot-0.0.5-py3-none-any.whl", hash = "sha256:50327c240243480d40ade4ea5bea4f464bf57d4ff000ea669fcd705396074863", size = 4840 },
-]
-
-[[package]]
-name = "toml"
-version = "0.10.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f", size = 22253 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/44/6f/7120676b6d73228c96e17f1f794d8ab046fc910d781c8d151120c3f1569e/toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b", size = 16588 },
 ]
 
 [[package]]

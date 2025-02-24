@@ -158,7 +158,7 @@ def launch_telegram(filename):
                 missed_bpr_cache
             )
 
-            response, missed_bpr_cache = await build_producer_status_message(
+            response = await build_producer_status_message(
                 cleos,
                 ntp_client,
                 bp_status,

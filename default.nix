@@ -1,6 +1,6 @@
 with (import <nixpkgs> {});
 let
-  zstandardStorePath = lib.getLib python312Packages.zstandard;
+  zstandardStorePath = lib.getLib python311Packages.zstandard;
 in
 stdenv.mkDerivation {
   name = "sauron-bot-uv";
@@ -19,9 +19,9 @@ stdenv.mkDerivation {
     LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$LIB_GCC_PATH"
     export LD_LIBRARY_PATH
 
-    ZSTANDARD_PATH="${zstandardStorePath}/lib/python3.12/site-packages"
-    PATCH="$PATCH:$ZSTANDARD_PATH"
-    export PATCH
+    ZSTANDARD_PATH="${zstandardStorePath}/lib/python3.11/site-packages"
+    PATH="$PATH:$ZSTANDARD_PATH"
+    export PATH
 
     # Install deps
     uv lock

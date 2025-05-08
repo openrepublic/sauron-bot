@@ -1,29 +1,38 @@
-#!/usr/bin/env python3
-
 import os
 import asks
 import json
+import time
 import speedtest
 import subprocess
 from ntplib import NTPClient
 from leap.cleos import CLEOS
 from datetime import datetime
 from configparser import ConfigParser
-from .types import *
+from .types import (
+    Config,
+    CpuLoad,
+    RamUsage,
+    DiskUsage,
+    System,
+    Network,
+    Cache,
+    BlockProducer,
+    Rotation,
+)
 
 
 def get_cpu_load():
     try:
-        load1, load5, load15 = os.getloadavg() 
+        load1, load5, load15 = os.getloadavg()
         return CpuLoad(**{
             'min_1': round(load1, 2),
             'min_5': round(load5, 2),
             'min_15': round(load15, 2)
         })
+
     except Exception as e:
         print('An exception occurred while getting cpu usage information: {e}')
         raise
-
 
 def get_ram_usage():
     try:
@@ -44,10 +53,10 @@ def get_ram_usage():
             'available_gb': available,
             'percent': percent
         })
+
     except Exception as e:
         print('An exception occurred while getting ram usage information: {e}')
         raise
-
 
 def get_disk_usage():
     try:
@@ -66,10 +75,10 @@ def get_disk_usage():
             'free_gb': free,
             'percent': percent
         })
+
     except Exception as e:
         print('An exception occurred while getting disk usage information: {e}')
         raise
-
 
 def get_nodeos_status():
     try:
@@ -78,12 +87,12 @@ def get_nodeos_status():
         process_count = len(nodeos_ps)
         if process_count > 0:
             return 'is running.'
-        else:
-            return 'is NOT running.'
+
+        return 'is NOT running.'
+
     except subprocess.CalledProcessError:
         print('Unable to check nodeos status.')
         raise
-
 
 def get_network_status():
     try:
@@ -97,12 +106,12 @@ def get_network_status():
                 'ping': round(ping, 2),
                 'down': round(download / 1024 / 1024, 2),
                 'up': round(upload / 1024 / 1024, 2),
-                'updated_at': get_timestamp_utcnow() 
+                'updated_at': get_timestamp_utcnow()
             })
+
     except Exception as e:
         print(f"Couldn't retrieve network stats, an exception occurred: {e}")
         return Network(**{'updated_at': 'an error occurred.'})
-
 
 async def get_system_info():
     return System(**{
@@ -112,7 +121,6 @@ async def get_system_info():
         'nodeos_status': get_nodeos_status(),
         'updated_at': get_timestamp_utcnow()
     })
-
 
 def get_payment(cleos: CLEOS, producer_name: str):
     payment_status = cleos.get_table(
@@ -124,8 +132,8 @@ def get_payment(cleos: CLEOS, producer_name: str):
     payment = '0.0000 TLOS'
     if [item for item in payment_status if item['bp'] == producer_name] != []:
         payment = [item for item in payment_status if item['bp'] == producer_name][0].get('pay')
-    return payment
 
+    return payment
 
 def get_producer_status(
         cleos: CLEOS,
@@ -158,11 +166,11 @@ def get_producer_status(
     if int(bp_status.missed_blocks_per_rotation) > missed_bpr_cache:
         missed_bpr_cache = bp_status.missed_blocks_per_rotation
         bp_status.alert = True
+
     elif int(bp_status.missed_blocks_per_rotation) == 0 and missed_bpr_cache > 0:
         missed_bpr_cache = 0
 
     return bp_status, missed_bpr_cache
-
 
 def get_abi(cleos: CLEOS, abi_path: str):
     abi = cleos.get_abi('eosio')
@@ -170,38 +178,36 @@ def get_abi(cleos: CLEOS, abi_path: str):
         json.dump(abi, file, indent=4)
     cleos.load_abi('eosio', abi)
 
-
 def get_timestamp_utcnow():
     return datetime.utcnow().strftime('%H:%M:%S')
-
 
 def get_ntp_time(client: NTPClient):
     try:
         response = client.request('pool.ntp.org')
         return response.tx_time
+
     except Exception as e:
         print(f"Failed to get NTP time: {e}")
         return None
 
-
 def get_clock_offset(client: NTPClient):
     ntp_time = get_ntp_time(client)
-    import time
     while ntp_time is None:
         ntp_time = get_ntp_time(client)
+
     system_time = time.time()
     clock_offset = system_time - ntp_time
     if clock_offset < 0.3:
         return 'Synced'
-    else:
-        return 'Desynced'
 
+    return 'Desynced'
 
 def get_config(filename: str):
     cfg = ConfigParser()
     cfg.read(filename)
     try:
         return Config(**dict(cfg['config']))
+
     except KeyError as err:
         print(f"Config exception: {err=}, {type(err)=}")
         raise
@@ -224,7 +230,6 @@ async def call_with_retry(
 
     raise ex
 
-
 async def get_all_producers(url: str):
     producers = []
     lower = 0
@@ -244,64 +249,60 @@ async def get_all_producers(url: str):
             }
         )
         response = response.json()
-
         producers += response['rows']
-
         lower = response['rows'][0]['total_votes']
 
     return producers
-
 
 async def get_producers_list(url: str) -> list[str]:
     producers = await get_all_producers(url)
     return [ producer['owner'] for producer in producers ]
 
-
 def get_neighbors(producers: list, producer_name: str):
     for index in range(1, len(producers)):
         if producers[index].get('owner') == producer_name:
             active = True
-            prev_bp = producers[index - 1].get('owner') 
+            prev_bp = producers[index - 1].get('owner')
             next_bp = producers[index + 1].get('owner')
             return active, prev_bp, next_bp
+
     return False, None, None
 
 
 async def get_rotation(cleos: CLEOS, config: dict):
-    active, prev_bp, next_bp = get_neighbors(await get_all_producers(config.node_url), config.producer_name)
+    active, prev_bp, next_bp = get_neighbors(
+        await get_all_producers(config.node_url),
+        config.producer_name
+    )
     return Rotation(**{
         'active': active,
         'prev_bp': prev_bp,
         'next_bp':next_bp
     })
 
-
 async def get_rank(cleos: CLEOS, config: dict):
     producers = await get_all_producers(config.node_url)
     return next((i for i, d in enumerate(producers) if d.get('owner') == config.producer_name), -1) + 1
-
 
 def sleep_delta(elapse_time, resource):
     if resource == 'network':
         sleep_time = 3600 - elapse_time
     else:
         sleep_time = 1
-    return max(sleep_time, 1)
 
+    return max(sleep_time, 1)
 
 def health_threshold(value):
     if float(value) >= 80:
         return True
-    else:
-        return False
 
+    return False
 
 def nodeos_failed(status: str):
     if status != 'is running.':
         return True
-    else:
-        return False
 
+    return False
 
 async def health_check(cache: Cache):
     cache.alert = False
@@ -311,6 +312,6 @@ async def health_check(cache: Cache):
         nodeos_failed(cache.system.nodeos_status)
     ):
         cache.alert = True
-    return cache
 
+    return cache
 

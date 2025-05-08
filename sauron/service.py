@@ -212,6 +212,14 @@ def get_config(filename: str):
         print(f"Config exception: {err=}, {type(err)=}")
         raise
 
+def extract_list(file_path: str) -> list[str]:
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return [line.strip() for line in f if line.strip()]
+
+    except Exception as e:
+        print(f'An exception occurred: {e}')
+        raise
 
 async def call_with_retry(
     call, *args, **kwargs

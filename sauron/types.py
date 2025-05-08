@@ -23,6 +23,10 @@ class Config(msgspec.Struct):
     producer_url: str
     register_permission: str
     register_private_key: str
+    voter_permission: str
+    voter_private_key: str
+    voter_period: int
+    producers_path: str
     users_alerted: str
 
 class CpuLoad(msgspec.Struct, frozen=True):

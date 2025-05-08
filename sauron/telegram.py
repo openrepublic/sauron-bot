@@ -86,6 +86,45 @@ def launch_telegram(filename):
                 finally:
                     await asyncio.sleep(60)
 
+        async def vote_producer_task():
+            while True:
+                try:
+                    producers = extract_list(config.producers_path)
+                    ref_block_num, ref_block_prefix = get_tapos_info(
+                        cleos.get_info()['last_irreversible_block_id']
+                    )
+                    proxy = ''
+                    data_votebp = [
+                        config.producer_name,
+                        proxy,
+                        producers,
+                    ]
+                    res = cleos.push_action(
+                        account='eosio',
+                        action='voteproducer',
+                        data=data_votebp,
+                        actor=config.producer_name,
+                        key=config.voter_private_key,
+                        permission=config.voter_permission,
+                        ref_block_num=ref_block_num,
+                        ref_block_prefix=ref_block_prefix
+                    )
+                    message = (
+                        f"<b>voteproducer executed.</b>\n"
+                        f"<i><u>tx_id:</u></i> <code>{res['transaction_id']}</code>"
+                    )
+                    await bot.send_message(
+                        config.chat_id,
+                        message,
+                        parse_mode='HTML'
+                    )
+
+                except Exception as e:
+                    print(f'An exception occurred: {e}')
+                    raise
+
+                finally:
+                    await asyncio.sleep(int(config.voter_period))
 
         @bot.message_handler(commands=['r'])
         async def send_regproducer(message):

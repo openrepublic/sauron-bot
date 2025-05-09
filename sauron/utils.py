@@ -1,10 +1,23 @@
-#!/usr/bin/env python3
-
 import locale
 from ntplib import NTPClient
 from leap.cleos import CLEOS
-from .types import *
-from .service import *
+from .types import (
+    Config,
+    CpuLoad,
+    RamUsage,
+    DiskUsage,
+    System,
+    Network,
+    Cache,
+    BlockProducer,
+    Rotation,
+)
+from .service import (
+    health_check,
+    get_clock_offset,
+    get_rank,
+    get_rotation,
+)
 
 
 green_check_mark_emoji = f"<tg-emoji emoji-id='9989'>✅</tg-emoji>"
@@ -12,12 +25,12 @@ red_alert_emoji = f"<tg-emoji emoji-id='128680'>🚨</tg-emoji>"
 rocket_emoji = f"<tg-emoji emoji-id='128640'>🚀</tg-emoji>"
 
 async def build_producer_status_message(
-        cleos: CLEOS,
-        ntp_client: NTPClient,
-        bp_status: tuple[BlockProducer, int],
-        cache_data: Cache,
-        config: Config,
-    ):
+    cleos: CLEOS,
+    ntp_client: NTPClient,
+    bp_status: tuple[BlockProducer, int],
+    cache_data: Cache,
+    config: Config,
+):
 
     sys_health_check = await health_check(cache_data)
     locale.setlocale(locale.LC_ALL, 'en_US.UTF-8') 
@@ -91,9 +104,9 @@ async def build_producer_status_message(
     if clock_offset != 'Synced' or bp_status.alert or sys_health_check.alert:
         response += build_tags(config.users_alerted)
         return response
+
     response += f"\n{green_check_mark_emoji}"
     return response
-
 
 def build_help_message():
     return (
@@ -106,16 +119,16 @@ def build_help_message():
         f"{format_fixed_width('<i>/schedule</i>', '<i>BP Schedule.</i>')}\n"
     )
 
-
 def get_schedule_message(schedule: list, producer_name):
     msg = f'<b><u>Schedule:</u></b>\n'
     for bp in range(0, len(schedule)):
         if schedule[bp] == producer_name:
             msg += f"<code>{bp + 1} - </code><b>{schedule[bp]}</b> {rocket_emoji}\n"
             continue
-        msg += f"<code>{bp + 1} - {schedule[bp]}</code>\n"
-    return msg
 
+        msg += f"<code>{bp + 1} - {schedule[bp]}</code>\n"
+
+    return msg
 
 def get_rotation_message(rotation: Rotation):
     msg = (
@@ -127,16 +140,14 @@ def get_rotation_message(rotation: Rotation):
             f"\n{format_fixed_width('Prev:', f'{rotation.prev_bp}', 13, 26)}"
             f"\n{format_fixed_width('Next:', f'{rotation.next_bp}', 13, 26)}"
         )
-    return msg
 
+    return msg
 
 def format_fixed_width(key, value, key_width=15, value_width=15):
     return f"{key:<{key_width}} {value:>{value_width}}"
 
-
 def formatting(value):
     return locale.format_string('%d', value, grouping=True)
-
 
 def build_tags(users_alerted: str | None):
     tags = f"\n{red_alert_emoji}\n"
@@ -144,6 +155,6 @@ def build_tags(users_alerted: str | None):
         users = [item.strip() for item in users_alerted.split(',')]
         for user in users:
             tags += f"{user}\n"
-    return tags
 
+    return tags
 

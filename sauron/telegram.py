@@ -1,4 +1,5 @@
 import json
+import time
 import click
 import asyncio
 import msgspec
@@ -8,8 +9,26 @@ from leap.cleos import CLEOS
 from leap.protocol.ds import get_tapos_info 
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import CallbackQuery, Message
-from .utils import *
-from .service import *
+from .types import (
+    CustomExceptionHandler,
+    Config,
+    Cache,
+)
+from .utils import (
+    build_producer_status_message,
+    get_schedule_message,
+    build_help_message,
+)
+from .service import (
+    get_abi,
+    get_config,
+    get_network_status,
+    get_system_info,
+    get_producer_status,
+    extract_list,
+    get_producers_list,
+    sleep_delta,
+)
 
 
 def launch_telegram(filename):
@@ -17,7 +36,10 @@ def launch_telegram(filename):
     config = get_config(filename)
 
     ntp_client = NTPClient()
-    bot = AsyncTeleBot(config.bot_token, exception_handler=CustomExceptionHandler())
+    bot = AsyncTeleBot(
+        config.bot_token,
+        exception_handler=CustomExceptionHandler()
+    )
     cleos = CLEOS(endpoint=config.node_url)
 
     global system_status_cache
@@ -29,27 +51,22 @@ def launch_telegram(filename):
 
         async def refresh_status_cache(resource: str):
             while True:
-                global system_status_cache
-                import time
                 start_time = int(time.time())
                 system_status_cache.network = await asyncio.to_thread(get_network_status)
                 finished_time = int(time.time())
                 sleep_time = sleep_delta(finished_time - start_time, resource)
                 await asyncio.sleep(sleep_time)
 
-
         async def send_notification():
             while True:
                 try:
                     global missed_bpr_cache
-                    global system_status_cache
                     system_status_cache.system = await get_system_info()
                     bp_status, missed_bpr_cache = get_producer_status(
                         cleos,
                         config.producer_name,
                         missed_bpr_cache
                     )
-
                     response = await build_producer_status_message(
                         cleos,
                         ntp_client,
@@ -57,17 +74,63 @@ def launch_telegram(filename):
                         system_status_cache,
                         config,
                     )
-                    await bot.send_message(config.chat_id, response, parse_mode='HTML')
+                    await bot.send_message(
+                        config.chat_id,
+                        response,
+                        parse_mode='HTML'
+                    )
+
                 except Exception as e:
                     print(f'An exception occurred: {e}')
+
                 finally:
                     await asyncio.sleep(60)
 
+        async def vote_producer_task():
+            while True:
+                try:
+                    producers = extract_list(config.producers_path)
+                    ref_block_num, ref_block_prefix = get_tapos_info(
+                        cleos.get_info()['last_irreversible_block_id']
+                    )
+                    proxy = ''
+                    data_votebp = [
+                        config.producer_name,
+                        proxy,
+                        producers,
+                    ]
+                    res = cleos.push_action(
+                        account='eosio',
+                        action='voteproducer',
+                        data=data_votebp,
+                        actor=config.producer_name,
+                        key=config.voter_private_key,
+                        permission=config.voter_permission,
+                        ref_block_num=ref_block_num,
+                        ref_block_prefix=ref_block_prefix
+                    )
+                    message = (
+                        f"<b>voteproducer executed.</b>\n"
+                        f"<i><u>tx_id:</u></i> <code>{res['transaction_id']}</code>"
+                    )
+                    await bot.send_message(
+                        config.chat_id,
+                        message,
+                        parse_mode='HTML'
+                    )
+
+                except Exception as e:
+                    print(f'An exception occurred: {e}')
+                    raise
+
+                finally:
+                    await asyncio.sleep(int(config.voter_period))
 
         @bot.message_handler(commands=['r'])
         async def send_regproducer(message):
             ref_block_num, ref_block_prefix = get_tapos_info(
-                    cleos.get_info()['last_irreversible_block_id'])
+                cleos.get_info()['last_irreversible_block_id']
+            )
             data_regproducer = [
                 config.producer_name,
                 config.producer_public_key,
@@ -90,13 +153,14 @@ def launch_telegram(filename):
                         f"<b>Bp Registered.</b>\n"
                         f"<i><u>tx_id:</u></i> <code>{res['transaction_id']}</code>"
                     ),
-                    parse_mode='HTML')
-
+                    parse_mode='HTML'
+            )
 
         @bot.message_handler(commands=['u'])
         async def send_unregprod(message):
             ref_block_num, ref_block_prefix = get_tapos_info(
-                    cleos.get_info()['last_irreversible_block_id'])
+                cleos.get_info()['last_irreversible_block_id']
+            )
             res = cleos.push_action(
                 account='eosio',
                 action='unregprod',
@@ -113,13 +177,14 @@ def launch_telegram(filename):
                         f"<b>BP Unregistered.</b>\n"
                         f"<i><u>tx_id:</u></i> <code>{res['transaction_id']}</code>"
                     ),
-                    parse_mode='HTML')
-
+                    parse_mode='HTML'
+            )
 
         #@bot.message_handler(commands=['c'])
         async def request_claim_rewards(message):
             ref_block_num, ref_block_prefix = get_tapos_info(
-                    cleos.get_info()['last_irreversible_block_id'])
+                cleos.get_info()['last_irreversible_block_id']
+            )
             res = cleos.push_action(
                 account='eosio',
                 action='claimrewards',
@@ -137,19 +202,24 @@ def launch_telegram(filename):
                         f"<code>{res['processed']['action_traces'][0]['inline_traces'][0]['act']['data']['quantity']}</code>\n"
                         f"<i><u>tx_id:</u></i> <code>{res['transaction_id']}</code>\n"
                     ),
-                    parse_mode='HTML')
-
+                    parse_mode='HTML'
+            )
 
         @bot.message_handler(commands=['schedule'])
         async def request_producers_schedule(message):
             producers = await get_producers_list(config.node_url)
-            schedule = get_schedule_message(producers, config.producer_name)
-            await bot.reply_to(message=message, text=schedule, parse_mode='HTML')
-
+            schedule = get_schedule_message(
+                producers,
+                config.producer_name
+             )
+            await bot.reply_to(
+                message=message,
+                text=schedule,
+                parse_mode='HTML'
+            )
 
         @bot.message_handler(commands=['s'])
         async def request_producer_status(message):
-            global system_status_cache
             global missed_bpr_cache
             system_status_cache.system = await get_system_info()
             bp_status, missed_bpr_cache = get_producer_status(
@@ -165,18 +235,25 @@ def launch_telegram(filename):
                 system_status_cache,
                 config,
             )
-            await bot.reply_to(message=message, text=response, parse_mode='HTML')
-
+            await bot.reply_to(
+                message=message,
+                text=response,
+                parse_mode='HTML'
+            )
 
         @bot.message_handler(commands=['h'])
         async def request_help_message(message):
-            await bot.reply_to(message=message, text=build_help_message(), parse_mode='HTML')
-
+            await bot.reply_to(
+                message=message,
+                text=build_help_message(),
+                parse_mode='HTML'
+            )
 
         get_abi(cleos, config.abi_path)
 
         asyncio.create_task(refresh_status_cache('network'))
-        asyncio.create_task(send_notification())  
+        asyncio.create_task(send_notification())
+        asyncio.create_task(vote_producer_task())
         await bot.infinity_polling()
 
     asyncio.run(_async_main())

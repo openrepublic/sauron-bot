@@ -57,6 +57,10 @@ def mock_config():
         'producer_public_key': 'EOS5zxgsnHa27u...',
         'register_permission': 'register',
         'register_private_key': '5HwdBtW',
+        'voter_permission': 'register',
+        'voter_private_key': '5HwdBtW',
+        'voter_period': '3600',
+        'producers_path': '/some/path/to/filename',
         'users_alerted': '@gollum',
     })
 
